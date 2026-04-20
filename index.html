@@ -13,6 +13,8 @@
     (function() {
       var storageKey = "vr_motion_permission";
       var remembered = localStorage.getItem(storageKey);
+      var params = new URLSearchParams(window.location.search);
+      var setupMode = params.get("motionSetup") === "1";
 
       if (!(window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function")) {
         return;
@@ -24,6 +26,9 @@
       DeviceOrientationEvent.requestPermission = function() {
         if (remembered === "granted") {
           return Promise.resolve("granted");
+        }
+        if (!setupMode) {
+          return Promise.resolve("denied");
         }
         if (!allowPromptThisTap) {
           return Promise.resolve("denied");
@@ -40,7 +45,7 @@
         });
       };
 
-      if (remembered === "granted") {
+      if (remembered === "granted" || !setupMode) {
         return;
       }
 
@@ -63,6 +68,7 @@
         btn.style.fontWeight = "600";
         btn.style.backdropFilter = "blur(4px)";
         btn.style.cursor = "pointer";
+        btn.title = "One-time motion permission setup";
         btn.addEventListener("click", function() {
           allowPromptThisTap = true;
           DeviceOrientationEvent.requestPermission().catch(function() {});
