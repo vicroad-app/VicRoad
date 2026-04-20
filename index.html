@@ -18,41 +18,41 @@
       var profileUrl = "./profiles/" + encodeURIComponent(profileId) + ".json";
       var defaultTargetFilename = "b83abeb89_IMG_6942.jpg";
 
-      function normalizeUrl(url) {
+      function normalizeUrl(url, baseUrl) {
         try {
-          return new URL(url, window.location.href).toString();
+          return new URL(url, baseUrl || window.location.href).toString();
         } catch (_) {
           return url;
         }
       }
 
-      function getReplacements(profile) {
+      function getReplacements(profile, profileBaseUrl) {
         var replacements = {};
 
         if (profile && profile.replacements && typeof profile.replacements === "object") {
           Object.keys(profile.replacements).forEach(function(key) {
-            replacements[key] = normalizeUrl(profile.replacements[key]);
+            replacements[key] = normalizeUrl(profile.replacements[key], profileBaseUrl);
           });
         }
 
         if (profile && (profile.licence_photo_url || profile.photo_url || profile.image_url)) {
           var photoUrl = profile.licence_photo_url || profile.photo_url || profile.image_url;
           var target = profile.target_filename || defaultTargetFilename;
-          replacements[target] = normalizeUrl(photoUrl);
+          replacements[target] = normalizeUrl(photoUrl, profileBaseUrl);
         }
 
         if (profile && profile.logo_url) {
-          replacements["469154745_outline.png"] = normalizeUrl(profile.logo_url);
+          replacements["469154745_outline.png"] = normalizeUrl(profile.logo_url, profileBaseUrl);
         }
 
         if (profile && profile.nav_icon_url) {
-          replacements["29b561457_IMG_6936-removebg-preview1.png"] = normalizeUrl(profile.nav_icon_url);
+          replacements["29b561457_IMG_6936-removebg-preview1.png"] = normalizeUrl(profile.nav_icon_url, profileBaseUrl);
         }
 
         return replacements;
       }
 
-      function applySelectorPhoto(profile) {
+      function applySelectorPhoto(profile, profileBaseUrl) {
         if (!profile) return;
 
         var selector = profile.paste_selector || profile.target_selector;
@@ -72,14 +72,14 @@
         if (!el) return;
 
         if (el.tagName === "IMG") {
-          el.src = normalizeUrl(url);
+          el.src = normalizeUrl(url, profileBaseUrl);
           return;
         }
 
         if (el.getAttribute("data-profile-photo-applied") === "1") return;
 
         var img = document.createElement("img");
-        img.src = normalizeUrl(url);
+        img.src = normalizeUrl(url, profileBaseUrl);
         img.alt = "profile";
         img.style.width = "100%";
         img.style.height = "100%";
@@ -93,8 +93,8 @@
         el.setAttribute("data-profile-photo-applied", "1");
       }
 
-      function applyProfile(profile) {
-        var replacements = getReplacements(profile);
+      function applyProfile(profile, profileBaseUrl) {
+        var replacements = getReplacements(profile, profileBaseUrl);
 
         function rewriteImage(img) {
           if (!img || !img.src) return;
@@ -109,7 +109,7 @@
           document.querySelectorAll("img").forEach(rewriteImage);
         }
 
-        applySelectorPhoto(profile);
+        applySelectorPhoto(profile, profileBaseUrl);
 
         var observer = new MutationObserver(function(mutations) {
           mutations.forEach(function(m) {
@@ -117,7 +117,7 @@
               if (!node || node.nodeType !== 1) return;
               if (node.tagName === "IMG") rewriteImage(node);
               if (node.querySelectorAll) node.querySelectorAll("img").forEach(rewriteImage);
-              applySelectorPhoto(profile);
+              applySelectorPhoto(profile, profileBaseUrl);
             });
           });
         });
@@ -126,7 +126,12 @@
 
       fetch(profileUrl, { cache: "no-store" })
         .then(function(res) { return res.ok ? res.json() : null; })
-        .then(function(profile) { if (profile) applyProfile(profile); })
+        .then(function(profile) {
+          if (profile) {
+            var profileBaseUrl = new URL(profileUrl, window.location.href).toString();
+            applyProfile(profile, profileBaseUrl);
+          }
+        })
         .catch(function() {});
     })();
   </script>
