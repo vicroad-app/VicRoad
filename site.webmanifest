@@ -2,6 +2,7 @@
   "name": "VicRoad",
   "short_name": "VicRoad",
   "start_url": "./?id=test",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
