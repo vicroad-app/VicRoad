@@ -128,6 +128,7 @@
   <script>
     (function() {
       var profileStorageKey = "vr_profile_id";
+      var defaultProfileId = "test";
       var params = new URLSearchParams(window.location.search);
       var profileId = params.get("id");
 
@@ -141,6 +142,17 @@
         } catch (_) {
           profileId = null;
         }
+      }
+
+      if (!profileId) {
+        profileId = defaultProfileId;
+      }
+
+      if (!params.get("id") && profileId) {
+        var nextParams = new URLSearchParams(window.location.search);
+        nextParams.set("id", profileId);
+        var nextUrl = window.location.pathname + "?" + nextParams.toString() + window.location.hash;
+        history.replaceState(null, "", nextUrl);
       }
 
       if (!profileId) return;

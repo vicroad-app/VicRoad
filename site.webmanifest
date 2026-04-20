@@ -1,7 +1,7 @@
 {
   "name": "VicRoad",
   "short_name": "VicRoad",
-  "start_url": "./",
+  "start_url": "./?id=test",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#00a651",
