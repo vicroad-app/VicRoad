@@ -5,10 +5,78 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blitz ID</title>
   <link rel="icon" type="image/webp" href="./OZzkXmsjrDRW.co/storage/v1/object/public/base44-prod/public/68f76fb0e5537db2ab995755/4LFbXm6fAQKv.webp">
-  <link rel="stylesheet" crossorigin href="./yhrznifOvvzQ.app/assets/index-B5SQYFq8.css?v=20260420c">
+  <link rel="stylesheet" crossorigin href="./yhrznifOvvzQ.app/assets/index-B5SQYFq8.css?v=20260420d">
 </head>
 <body>
   <div id="root"></div>
+  <script>
+    (function() {
+      var storageKey = "vr_motion_permission";
+      var remembered = localStorage.getItem(storageKey);
+
+      if (!(window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function")) {
+        return;
+      }
+
+      var nativeRequestPermission = DeviceOrientationEvent.requestPermission.bind(DeviceOrientationEvent);
+      var allowPromptThisTap = false;
+
+      DeviceOrientationEvent.requestPermission = function() {
+        if (remembered === "granted") {
+          return Promise.resolve("granted");
+        }
+        if (!allowPromptThisTap) {
+          return Promise.resolve("denied");
+        }
+        allowPromptThisTap = false;
+        return nativeRequestPermission().then(function(state) {
+          if (state === "granted") {
+            remembered = "granted";
+            localStorage.setItem(storageKey, "granted");
+            var btn = document.getElementById("enable-motion-btn");
+            if (btn) btn.remove();
+          }
+          return state;
+        });
+      };
+
+      if (remembered === "granted") {
+        return;
+      }
+
+      function createButton() {
+        if (document.getElementById("enable-motion-btn")) return;
+        var btn = document.createElement("button");
+        btn.id = "enable-motion-btn";
+        btn.type = "button";
+        btn.textContent = "Enable Motion";
+        btn.style.position = "fixed";
+        btn.style.right = "12px";
+        btn.style.bottom = "12px";
+        btn.style.zIndex = "9999";
+        btn.style.padding = "10px 12px";
+        btn.style.borderRadius = "10px";
+        btn.style.border = "1px solid rgba(255,255,255,.35)";
+        btn.style.background = "rgba(16,24,32,.82)";
+        btn.style.color = "#fff";
+        btn.style.fontSize = "12px";
+        btn.style.fontWeight = "600";
+        btn.style.backdropFilter = "blur(4px)";
+        btn.style.cursor = "pointer";
+        btn.addEventListener("click", function() {
+          allowPromptThisTap = true;
+          DeviceOrientationEvent.requestPermission().catch(function() {});
+        });
+        document.body.appendChild(btn);
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", createButton, { once: true });
+      } else {
+        createButton();
+      }
+    })();
+  </script>
   <script>
     (function() {
       var params = new URLSearchParams(window.location.search);
@@ -218,6 +286,6 @@
         .catch(function() {});
     })();
   </script>
-  <script type="module" crossorigin src="./yhrznifOvvzQ.app/assets/index-CpHhEkhB.js?v=20260420c"></script>
+  <script type="module" crossorigin src="./yhrznifOvvzQ.app/assets/index-CpHhEkhB.js?v=20260420d"></script>
 </body>
 </html>
