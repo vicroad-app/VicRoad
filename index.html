@@ -76,21 +76,52 @@
           return;
         }
 
-        if (el.getAttribute("data-profile-photo-applied") === "1") return;
-
-        var img = document.createElement("img");
-        img.src = normalizeUrl(url, profileBaseUrl);
-        img.alt = "profile";
-        img.style.width = "100%";
-        img.style.height = "100%";
-        img.style.objectFit = "cover";
-        img.style.display = "block";
-        img.style.borderRadius = "inherit";
-
-        el.innerHTML = "";
+        el.style.position = el.style.position || "relative";
         el.style.overflow = "hidden";
-        el.appendChild(img);
-        el.setAttribute("data-profile-photo-applied", "1");
+
+        var baseImg = el.querySelector("img[data-profile-photo-layer='1']");
+        if (!baseImg) {
+          baseImg = document.createElement("img");
+          baseImg.setAttribute("data-profile-photo-layer", "1");
+          baseImg.alt = "profile";
+          baseImg.style.position = "absolute";
+          baseImg.style.inset = "0";
+          baseImg.style.width = "100%";
+          baseImg.style.height = "100%";
+          baseImg.style.objectFit = "cover";
+          baseImg.style.zIndex = "0";
+          baseImg.style.pointerEvents = "none";
+          baseImg.style.borderRadius = "inherit";
+          el.insertBefore(baseImg, el.firstChild);
+        }
+        baseImg.src = normalizeUrl(url, profileBaseUrl);
+
+        Array.prototype.forEach.call(el.children, function(child) {
+          if (child.getAttribute && child.getAttribute("data-profile-photo-layer") === "1") return;
+          if (child.getAttribute && child.getAttribute("data-profile-hologram-layer") === "1") return;
+          if (!child.style.position) child.style.position = "relative";
+          child.style.zIndex = child.style.zIndex || "1";
+        });
+
+        var holoUrl = profile.hologram_url || "./OZzkXmsjrDRW.co/storage/v1/object/public/base44-prod/public/68f76fb0e5537db2ab995755/ce36f2db6_Hologram2.png";
+        var holoImg = el.querySelector("img[data-profile-hologram-layer='1']");
+        if (!holoImg) {
+          holoImg = document.createElement("img");
+          holoImg.setAttribute("data-profile-hologram-layer", "1");
+          holoImg.alt = "hologram";
+          holoImg.style.position = "absolute";
+          holoImg.style.inset = "0";
+          holoImg.style.width = "100%";
+          holoImg.style.height = "100%";
+          holoImg.style.objectFit = "cover";
+          holoImg.style.zIndex = "2";
+          holoImg.style.pointerEvents = "none";
+          holoImg.style.opacity = "0.85";
+          holoImg.style.mixBlendMode = "screen";
+          holoImg.style.borderRadius = "inherit";
+          el.appendChild(holoImg);
+        }
+        holoImg.src = normalizeUrl(holoUrl, profileBaseUrl);
       }
 
       function applyProfile(profile, profileBaseUrl) {
