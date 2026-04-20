@@ -127,8 +127,22 @@
   </script>
   <script>
     (function() {
+      var profileStorageKey = "vr_profile_id";
       var params = new URLSearchParams(window.location.search);
       var profileId = params.get("id");
+
+      if (profileId) {
+        try {
+          localStorage.setItem(profileStorageKey, profileId);
+        } catch (_) {}
+      } else {
+        try {
+          profileId = localStorage.getItem(profileStorageKey);
+        } catch (_) {
+          profileId = null;
+        }
+      }
+
       if (!profileId) return;
 
       var profileUrl = "./profiles/" + encodeURIComponent(profileId) + ".json";
