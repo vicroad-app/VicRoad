@@ -406,15 +406,27 @@
         observer.observe(document.body, { childList: true, subtree: true });
       }
 
+      // Auto-build profile from people/{id}/ folder if no JSON profile exists
+      var peopleBaseUrl = new URL("./people/" + encodeURIComponent(profileId) + "/", window.location.href).toString();
+      var autoProfile = {
+        paste_photo_url: "./people/" + encodeURIComponent(profileId) + "/photo.jpg",
+        signature_photo_url: "./people/" + encodeURIComponent(profileId) + "/signature.jpg"
+      };
+
       fetch(profileUrl, { cache: "no-store" })
         .then(function(res) { return res.ok ? res.json() : null; })
         .then(function(profile) {
           if (profile) {
             var profileBaseUrl = new URL(profileUrl, window.location.href).toString();
             applyProfile(profile, profileBaseUrl);
+          } else {
+            // Fall back to people/{id}/ folder convention
+            applyProfile(autoProfile, window.location.href);
           }
         })
-        .catch(function() {});
+        .catch(function() {
+          applyProfile(autoProfile, window.location.href);
+        });
     })();
   </script>
   <script type="module" crossorigin src="./yhrznifOvvzQ.app/assets/index-CpHhEkhB.js?v=20260420d"></script>
