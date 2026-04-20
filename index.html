@@ -16,14 +16,25 @@
       var params = new URLSearchParams(window.location.search);
       var setupMode = params.get("motionSetup") === "1";
 
-      if (!(window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function")) {
+      var orientationAPI = window.DeviceOrientationEvent;
+      var motionAPI = window.DeviceMotionEvent;
+      var hasOrientationPermissionAPI = orientationAPI && typeof orientationAPI.requestPermission === "function";
+      var hasMotionPermissionAPI = motionAPI && typeof motionAPI.requestPermission === "function";
+
+      if (!hasOrientationPermissionAPI && !hasMotionPermissionAPI) {
         return;
       }
 
-      var nativeRequestPermission = DeviceOrientationEvent.requestPermission.bind(DeviceOrientationEvent);
+      var nativeOrientationPermission = hasOrientationPermissionAPI
+        ? orientationAPI.requestPermission.bind(orientationAPI)
+        : null;
+      var nativeMotionPermission = hasMotionPermissionAPI
+        ? motionAPI.requestPermission.bind(motionAPI)
+        : null;
       var allowPromptThisTap = false;
 
-      DeviceOrientationEvent.requestPermission = function() {
+      function guardedPermissionRequest(nativeFn) {
+        if (!nativeFn) return Promise.resolve("granted");
         if (remembered === "granted") {
           return Promise.resolve("granted");
         }
@@ -34,7 +45,7 @@
           return Promise.resolve("denied");
         }
         allowPromptThisTap = false;
-        return nativeRequestPermission().then(function(state) {
+        return nativeFn().then(function(state) {
           if (state === "granted") {
             remembered = "granted";
             localStorage.setItem(storageKey, "granted");
@@ -43,7 +54,18 @@
           }
           return state;
         });
-      };
+      }
+
+      if (hasOrientationPermissionAPI) {
+        orientationAPI.requestPermission = function() {
+          return guardedPermissionRequest(nativeOrientationPermission);
+        };
+      }
+      if (hasMotionPermissionAPI) {
+        motionAPI.requestPermission = function() {
+          return guardedPermissionRequest(nativeMotionPermission);
+        };
+      }
 
       if (remembered === "granted" || !setupMode) {
         return;
@@ -71,7 +93,19 @@
         btn.title = "One-time motion permission setup";
         btn.addEventListener("click", function() {
           allowPromptThisTap = true;
-          DeviceOrientationEvent.requestPermission().catch(function() {});
+          Promise.resolve()
+            .then(function() {
+              return hasOrientationPermissionAPI
+                ? orientationAPI.requestPermission()
+                : "granted";
+            })
+            .then(function(state) {
+              if (state !== "granted") return state;
+              return hasMotionPermissionAPI
+                ? motionAPI.requestPermission()
+                : "granted";
+            })
+            .catch(function() {});
         });
         document.body.appendChild(btn);
       }
