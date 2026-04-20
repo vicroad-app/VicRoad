@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blitz ID</title>
   <link rel="icon" type="image/webp" href="./OZzkXmsjrDRW.co/storage/v1/object/public/base44-prod/public/68f76fb0e5537db2ab995755/4LFbXm6fAQKv.webp">
-  <link rel="stylesheet" crossorigin href="./yhrznifOvvzQ.app/assets/index-B5SQYFq8.css?v=20260420b">
+  <link rel="stylesheet" crossorigin href="./yhrznifOvvzQ.app/assets/index-B5SQYFq8.css?v=20260420c">
 </head>
 <body>
   <div id="root"></div>
@@ -15,19 +15,54 @@
       var profileId = params.get("id");
       if (!profileId) return;
 
-      var supabaseBase = "https://qtrypzzcjebvfcihiynt.supabase.co";
-      var profileUrl = supabaseBase + "/storage/v1/object/public/base44-prod/public/profiles/" + encodeURIComponent(profileId) + ".json";
-      var targetFilename = "b83abeb89_IMG_6942.jpg";
+      var profileUrl = "./profiles/" + encodeURIComponent(profileId) + ".json";
+      var defaultTargetFilename = "b83abeb89_IMG_6942.jpg";
+
+      function normalizeUrl(url) {
+        try {
+          return new URL(url, window.location.href).toString();
+        } catch (_) {
+          return url;
+        }
+      }
+
+      function getReplacements(profile) {
+        var replacements = {};
+
+        if (profile && profile.replacements && typeof profile.replacements === "object") {
+          Object.keys(profile.replacements).forEach(function(key) {
+            replacements[key] = normalizeUrl(profile.replacements[key]);
+          });
+        }
+
+        if (profile && (profile.licence_photo_url || profile.photo_url || profile.image_url)) {
+          var photoUrl = profile.licence_photo_url || profile.photo_url || profile.image_url;
+          var target = profile.target_filename || defaultTargetFilename;
+          replacements[target] = normalizeUrl(photoUrl);
+        }
+
+        if (profile && profile.logo_url) {
+          replacements["469154745_outline.png"] = normalizeUrl(profile.logo_url);
+        }
+
+        if (profile && profile.nav_icon_url) {
+          replacements["29b561457_IMG_6936-removebg-preview1.png"] = normalizeUrl(profile.nav_icon_url);
+        }
+
+        return replacements;
+      }
 
       function applyProfile(profile) {
-        var photoUrl = profile && (profile.licence_photo_url || profile.photo_url || profile.image_url);
-        if (!photoUrl) return;
+        var replacements = getReplacements(profile);
+        if (Object.keys(replacements).length === 0) return;
 
         function rewriteImage(img) {
           if (!img || !img.src) return;
-          if (img.src.indexOf(targetFilename) !== -1) {
-            img.src = photoUrl;
-          }
+          Object.keys(replacements).forEach(function(filename) {
+            if (img.src.indexOf(filename) !== -1) {
+              img.src = replacements[filename];
+            }
+          });
         }
 
         document.querySelectorAll("img").forEach(rewriteImage);
@@ -49,6 +84,6 @@
         .catch(function() {});
     })();
   </script>
-  <script type="module" crossorigin src="./yhrznifOvvzQ.app/assets/index-CpHhEkhB.js?v=20260420b"></script>
+  <script type="module" crossorigin src="./yhrznifOvvzQ.app/assets/index-CpHhEkhB.js?v=20260420c"></script>
 </body>
 </html>

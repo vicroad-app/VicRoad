@@ -1,0 +1,9 @@
+{
+  "licence_photo_url": "../user-photos/example-licence.jpg",
+  "logo_url": "../user-photos/example-logo.png",
+  "nav_icon_url": "../user-photos/example-nav.png",
+  "replacements": {
+    "0d9abd62a_IMG_6900.jpg": "../user-photos/example-demerit.jpg",
+    "f04601d5d_IMG_6901.jpg": "../user-photos/example-vehicles.jpg"
+  }
+}
