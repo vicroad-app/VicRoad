@@ -26,6 +26,23 @@
         }
       }
 
+      function ensureHologramStyles() {
+        if (document.getElementById("profile-holo-styles")) return;
+        var style = document.createElement("style");
+        style.id = "profile-holo-styles";
+        style.textContent = ""
+          + "@keyframes holoSweep {"
+          + "0% { transform: translateX(-140%) skewX(-12deg); opacity: .05; }"
+          + "35% { opacity: .35; }"
+          + "100% { transform: translateX(160%) skewX(-12deg); opacity: .08; }"
+          + "}"
+          + "@keyframes holoPulse {"
+          + "0%,100% { opacity: .16; }"
+          + "50% { opacity: .26; }"
+          + "}";
+        document.head.appendChild(style);
+      }
+
       function getReplacements(profile, profileBaseUrl) {
         var replacements = {};
 
@@ -71,6 +88,8 @@
         var el = nodes[index];
         if (!el) return;
 
+        ensureHologramStyles();
+
         if (el.tagName === "IMG") {
           el.src = normalizeUrl(url, profileBaseUrl);
           return;
@@ -92,6 +111,7 @@
           baseImg.style.zIndex = "0";
           baseImg.style.pointerEvents = "none";
           baseImg.style.borderRadius = "inherit";
+          baseImg.style.filter = "saturate(1.05) contrast(1.06)";
           el.insertBefore(baseImg, el.firstChild);
         }
         baseImg.src = normalizeUrl(url, profileBaseUrl);
@@ -116,12 +136,44 @@
           holoImg.style.objectFit = "cover";
           holoImg.style.zIndex = "2";
           holoImg.style.pointerEvents = "none";
-          holoImg.style.opacity = "0.85";
-          holoImg.style.mixBlendMode = "screen";
+          holoImg.style.opacity = "0.92";
+          holoImg.style.mixBlendMode = "hard-light";
           holoImg.style.borderRadius = "inherit";
           el.appendChild(holoImg);
         }
         holoImg.src = normalizeUrl(holoUrl, profileBaseUrl);
+
+        var sweep = el.querySelector("span[data-profile-hologram-sweep='1']");
+        if (!sweep) {
+          sweep = document.createElement("span");
+          sweep.setAttribute("data-profile-hologram-sweep", "1");
+          sweep.style.position = "absolute";
+          sweep.style.top = "-8%";
+          sweep.style.left = "-60%";
+          sweep.style.width = "55%";
+          sweep.style.height = "116%";
+          sweep.style.background = "linear-gradient(100deg, rgba(255,255,255,0) 0%, rgba(175,240,255,.35) 45%, rgba(255,255,255,.06) 100%)";
+          sweep.style.mixBlendMode = "screen";
+          sweep.style.filter = "blur(.3px)";
+          sweep.style.zIndex = "3";
+          sweep.style.pointerEvents = "none";
+          sweep.style.animation = "holoSweep 3.2s linear infinite";
+          el.appendChild(sweep);
+        }
+
+        var pulse = el.querySelector("span[data-profile-hologram-pulse='1']");
+        if (!pulse) {
+          pulse = document.createElement("span");
+          pulse.setAttribute("data-profile-hologram-pulse", "1");
+          pulse.style.position = "absolute";
+          pulse.style.inset = "0";
+          pulse.style.background = "radial-gradient(circle at 23% 18%, rgba(130,240,255,.34) 0%, rgba(130,240,255,0) 35%), radial-gradient(circle at 76% 78%, rgba(132,163,255,.24) 0%, rgba(132,163,255,0) 42%)";
+          pulse.style.mixBlendMode = "screen";
+          pulse.style.zIndex = "2";
+          pulse.style.pointerEvents = "none";
+          pulse.style.animation = "holoPulse 2.1s ease-in-out infinite";
+          el.appendChild(pulse);
+        }
       }
 
       function applyProfile(profile, profileBaseUrl) {
