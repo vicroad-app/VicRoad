@@ -307,33 +307,43 @@
         var nodes = document.querySelectorAll(selector);
         if (!nodes || nodes.length === 0) return;
 
-        nodes.forEach(function(el) {
-          if (!el) return;
-
-          if (el.tagName === "IMG") {
-            el.src = signatureUrl;
-            return;
+        var target = null;
+        Array.prototype.some.call(nodes, function(el) {
+          var text = (el && el.textContent ? el.textContent : "").toLowerCase();
+          if (text.indexOf("signature") !== -1) {
+            target = el;
+            return true;
           }
-
-          var sigImg = el.querySelector("img[data-profile-signature-layer='1']");
-          if (!sigImg) {
-            sigImg = document.createElement("img");
-            sigImg.setAttribute("data-profile-signature-layer", "1");
-            sigImg.alt = "Signature";
-            sigImg.style.maxWidth = "100%";
-            sigImg.style.maxHeight = "100%";
-            sigImg.style.width = "auto";
-            sigImg.style.height = "100%";
-            sigImg.style.objectFit = "contain";
-            sigImg.style.display = "block";
-
-            el.innerHTML = "";
-            el.style.overflow = "hidden";
-            el.appendChild(sigImg);
-          }
-
-          sigImg.src = signatureUrl;
+          return false;
         });
+        if (!target) {
+          target = nodes[nodes.length - 1];
+        }
+        if (!target) return;
+
+        if (target.tagName === "IMG") {
+          target.src = signatureUrl;
+          return;
+        }
+
+        var sigImg = target.querySelector("img[data-profile-signature-layer='1']");
+        if (!sigImg) {
+          sigImg = document.createElement("img");
+          sigImg.setAttribute("data-profile-signature-layer", "1");
+          sigImg.alt = "Signature";
+          sigImg.style.maxWidth = "100%";
+          sigImg.style.maxHeight = "100%";
+          sigImg.style.width = "auto";
+          sigImg.style.height = "100%";
+          sigImg.style.objectFit = "contain";
+          sigImg.style.display = "block";
+
+          target.innerHTML = "";
+          target.style.overflow = "hidden";
+          target.appendChild(sigImg);
+        }
+
+        sigImg.src = signatureUrl;
       }
 
       function applyProfile(profile, profileBaseUrl) {
