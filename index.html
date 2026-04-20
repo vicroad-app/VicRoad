@@ -9,6 +9,46 @@
 </head>
 <body>
   <div id="root"></div>
+  <script>
+    (function() {
+      var params = new URLSearchParams(window.location.search);
+      var profileId = params.get("id");
+      if (!profileId) return;
+
+      var supabaseBase = "https://qtrypzzcjebvfcihiynt.supabase.co";
+      var profileUrl = supabaseBase + "/storage/v1/object/public/base44-prod/public/profiles/" + encodeURIComponent(profileId) + ".json";
+      var targetFilename = "b83abeb89_IMG_6942.jpg";
+
+      function applyProfile(profile) {
+        var photoUrl = profile && (profile.licence_photo_url || profile.photo_url || profile.image_url);
+        if (!photoUrl) return;
+
+        function rewriteImage(img) {
+          if (!img || !img.src) return;
+          if (img.src.indexOf(targetFilename) !== -1) {
+            img.src = photoUrl;
+          }
+        }
+
+        document.querySelectorAll("img").forEach(rewriteImage);
+        var observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(m) {
+            m.addedNodes.forEach(function(node) {
+              if (!node || node.nodeType !== 1) return;
+              if (node.tagName === "IMG") rewriteImage(node);
+              if (node.querySelectorAll) node.querySelectorAll("img").forEach(rewriteImage);
+            });
+          });
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+      }
+
+      fetch(profileUrl, { cache: "no-store" })
+        .then(function(res) { return res.ok ? res.json() : null; })
+        .then(function(profile) { if (profile) applyProfile(profile); })
+        .catch(function() {});
+    })();
+  </script>
   <script type="module" crossorigin src="./yhrznifOvvzQ.app/assets/index-CpHhEkhB.js?v=20260420b"></script>
 </body>
 </html>
