@@ -184,6 +184,9 @@
       function applySelectorPhoto(profile, profileBaseUrl) {
         if (!profile) return;
 
+        var selector = profile.paste_selector || profile.target_selector;
+        if (!selector) return;
+
         var url = profile.paste_photo_url || profile.licence_photo_url || profile.photo_url || profile.image_url;
         if (!url) return;
 
@@ -193,9 +196,6 @@
         document.querySelectorAll("img[alt='License photo']").forEach(function(img) {
           img.src = resolvedPhotoUrl;
         });
-
-        var selector = profile.paste_selector || profile.target_selector;
-        if (!selector) return;
 
         var nodes = document.querySelectorAll(selector);
         if (!nodes || nodes.length === 0) return;

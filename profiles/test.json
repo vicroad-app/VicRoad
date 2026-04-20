@@ -1,4 +1,7 @@
 {
-  "licence_photo_url": "../user-photos/test-user.jpg",
+  "paste_selector": "div.w-full.h-full.flex.items-center.justify-center.text-gray-400.bg-gray-200",
+  "paste_index": 1,
+  "paste_photo_url": "../user-photos/test-user.jpg",
+  "hologram_url": "../OZzkXmsjrDRW.co/storage/v1/object/public/base44-prod/public/68f76fb0e5537db2ab995755/ce36f2db6_Hologram2.png",
   "signature_photo_url": "../user-photos/img_4036.jpg"
 }
