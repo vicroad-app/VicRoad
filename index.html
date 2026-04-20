@@ -190,6 +190,13 @@
         var url = profile.paste_photo_url || profile.licence_photo_url || profile.photo_url || profile.image_url;
         if (!url) return;
 
+        var resolvedPhotoUrl = normalizeUrl(url, profileBaseUrl);
+
+        // Always override existing dynamic licence photo if present.
+        document.querySelectorAll("img[alt='License photo']").forEach(function(img) {
+          img.src = resolvedPhotoUrl;
+        });
+
         var nodes = document.querySelectorAll(selector);
         if (!nodes || nodes.length === 0) return;
 
@@ -203,7 +210,7 @@
         ensureHologramStyles();
 
         if (el.tagName === "IMG") {
-          el.src = normalizeUrl(url, profileBaseUrl);
+          el.src = resolvedPhotoUrl;
           return;
         }
 
@@ -226,7 +233,7 @@
           baseImg.style.filter = "saturate(1.05) contrast(1.06)";
           el.insertBefore(baseImg, el.firstChild);
         }
-        baseImg.src = normalizeUrl(url, profileBaseUrl);
+        baseImg.src = resolvedPhotoUrl;
 
         Array.prototype.forEach.call(el.children, function(child) {
           if (child.getAttribute && child.getAttribute("data-profile-photo-layer") === "1") return;
