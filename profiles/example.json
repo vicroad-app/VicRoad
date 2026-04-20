@@ -4,6 +4,7 @@
   "paste_index": 0,
   "paste_photo_url": "../user-photos/example-licence.jpg",
   "signature_photo_url": "../user-photos/example-signature.png",
+  "signature_selector": "div.h-16.flex.items-center.text-gray-400.text-sm.italic",
   "logo_url": "../user-photos/example-logo.png",
   "nav_icon_url": "../user-photos/example-nav.png",
   "replacements": {

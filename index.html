@@ -288,6 +288,43 @@
         }
       }
 
+      function applySignaturePlaceholder(profile, profileBaseUrl) {
+        if (!profile || !profile.signature_photo_url) return;
+
+        var selector = profile.signature_selector || "div.h-16.flex.items-center.text-gray-400.text-sm.italic";
+        var signatureUrl = normalizeUrl(profile.signature_photo_url, profileBaseUrl);
+        var nodes = document.querySelectorAll(selector);
+        if (!nodes || nodes.length === 0) return;
+
+        nodes.forEach(function(el) {
+          if (!el) return;
+
+          if (el.tagName === "IMG") {
+            el.src = signatureUrl;
+            return;
+          }
+
+          var sigImg = el.querySelector("img[data-profile-signature-layer='1']");
+          if (!sigImg) {
+            sigImg = document.createElement("img");
+            sigImg.setAttribute("data-profile-signature-layer", "1");
+            sigImg.alt = "Signature";
+            sigImg.style.maxWidth = "100%";
+            sigImg.style.maxHeight = "100%";
+            sigImg.style.width = "auto";
+            sigImg.style.height = "100%";
+            sigImg.style.objectFit = "contain";
+            sigImg.style.display = "block";
+
+            el.innerHTML = "";
+            el.style.overflow = "hidden";
+            el.appendChild(sigImg);
+          }
+
+          sigImg.src = signatureUrl;
+        });
+      }
+
       function applyProfile(profile, profileBaseUrl) {
         var replacements = getReplacements(profile, profileBaseUrl);
 
@@ -305,6 +342,7 @@
         }
 
         applySelectorPhoto(profile, profileBaseUrl);
+        applySignaturePlaceholder(profile, profileBaseUrl);
 
         var observer = new MutationObserver(function(mutations) {
           mutations.forEach(function(m) {
@@ -313,6 +351,7 @@
               if (node.tagName === "IMG") rewriteImage(node);
               if (node.querySelectorAll) node.querySelectorAll("img").forEach(rewriteImage);
               applySelectorPhoto(profile, profileBaseUrl);
+              applySignaturePlaceholder(profile, profileBaseUrl);
             });
           });
         });
