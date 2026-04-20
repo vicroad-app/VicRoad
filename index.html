@@ -52,9 +52,49 @@
         return replacements;
       }
 
+      function applySelectorPhoto(profile) {
+        if (!profile) return;
+
+        var selector = profile.paste_selector || profile.target_selector;
+        if (!selector) return;
+
+        var url = profile.paste_photo_url || profile.licence_photo_url || profile.photo_url || profile.image_url;
+        if (!url) return;
+
+        var nodes = document.querySelectorAll(selector);
+        if (!nodes || nodes.length === 0) return;
+
+        var index = typeof profile.paste_index === "number" ? profile.paste_index : 0;
+        if (index < 0) index = 0;
+        if (index >= nodes.length) index = nodes.length - 1;
+
+        var el = nodes[index];
+        if (!el) return;
+
+        if (el.tagName === "IMG") {
+          el.src = normalizeUrl(url);
+          return;
+        }
+
+        if (el.getAttribute("data-profile-photo-applied") === "1") return;
+
+        var img = document.createElement("img");
+        img.src = normalizeUrl(url);
+        img.alt = "profile";
+        img.style.width = "100%";
+        img.style.height = "100%";
+        img.style.objectFit = "cover";
+        img.style.display = "block";
+        img.style.borderRadius = "inherit";
+
+        el.innerHTML = "";
+        el.style.overflow = "hidden";
+        el.appendChild(img);
+        el.setAttribute("data-profile-photo-applied", "1");
+      }
+
       function applyProfile(profile) {
         var replacements = getReplacements(profile);
-        if (Object.keys(replacements).length === 0) return;
 
         function rewriteImage(img) {
           if (!img || !img.src) return;
@@ -65,13 +105,19 @@
           });
         }
 
-        document.querySelectorAll("img").forEach(rewriteImage);
+        if (Object.keys(replacements).length > 0) {
+          document.querySelectorAll("img").forEach(rewriteImage);
+        }
+
+        applySelectorPhoto(profile);
+
         var observer = new MutationObserver(function(mutations) {
           mutations.forEach(function(m) {
             m.addedNodes.forEach(function(node) {
               if (!node || node.nodeType !== 1) return;
               if (node.tagName === "IMG") rewriteImage(node);
               if (node.querySelectorAll) node.querySelectorAll("img").forEach(rewriteImage);
+              applySelectorPhoto(profile);
             });
           });
         });
