@@ -204,7 +204,11 @@
         if (index < 0) index = 0;
         if (index >= nodes.length) index = nodes.length - 1;
 
-        var el = nodes[index];
+        // Skip divs that contain an SVG (e.g. lock icon) — find the nth non-SVG div
+        var nonSvgNodes = Array.prototype.filter.call(nodes, function(n) {
+          return !n.querySelector("svg");
+        });
+        var el = nonSvgNodes[index] || nonSvgNodes[0];
         if (!el) return;
 
         ensureHologramStyles();
