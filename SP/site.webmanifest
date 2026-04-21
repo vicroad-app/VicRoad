@@ -1,0 +1,16 @@
+{
+  "name": "VicRoad",
+  "short_name": "VicRoad",
+  "start_url": "/VicRoad/SP/?id=SP",
+  "scope": "/VicRoad/SP/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/VicRoad/people/SP/AE6DF973-6A1E-4504-8D2C-57BD2BFCAEAF.png",
+      "sizes": "any",
+      "type": "image/png"
+    }
+  ]
+}
