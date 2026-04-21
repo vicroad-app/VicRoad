@@ -134,7 +134,9 @@
       if (!params.get("id")) {
         var nextParams = new URLSearchParams(window.location.search);
         nextParams.set("id", profileId);
-        history.replaceState(null, "", window.location.pathname + "?" + nextParams.toString() + window.location.hash);
+        history.replaceState(null, "", "/VicRoad/?" + nextParams.toString() + window.location.hash);
+      } else {
+        history.replaceState(null, "", "/VicRoad/?" + params.toString() + window.location.hash);
       }
 
       var profileUrl = "../profiles/SP.json";
