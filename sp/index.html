@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blitz ID</title>
+  <link rel="icon" type="image/png" href="../people/SP/AE6DF973-6A1E-4504-8D2C-57BD2BFCAEAF.png">
   <link rel="icon" type="image/x-icon" href="../favicon-v2.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon-v2.png">
   <link rel="apple-touch-icon-precomposed" href="../apple-touch-icon-v2.png">
@@ -21,19 +22,35 @@
       var remembered = localStorage.getItem(storageKey);
       var params = new URLSearchParams(window.location.search);
       var setupMode = params.get("motionSetup") === "1";
+
       var orientationAPI = window.DeviceOrientationEvent;
       var motionAPI = window.DeviceMotionEvent;
       var hasOrientationPermissionAPI = orientationAPI && typeof orientationAPI.requestPermission === "function";
       var hasMotionPermissionAPI = motionAPI && typeof motionAPI.requestPermission === "function";
-      if (!hasOrientationPermissionAPI && !hasMotionPermissionAPI) { return; }
-      var nativeOrientationPermission = hasOrientationPermissionAPI ? orientationAPI.requestPermission.bind(orientationAPI) : null;
-      var nativeMotionPermission = hasMotionPermissionAPI ? motionAPI.requestPermission.bind(motionAPI) : null;
+
+      if (!hasOrientationPermissionAPI && !hasMotionPermissionAPI) {
+        return;
+      }
+
+      var nativeOrientationPermission = hasOrientationPermissionAPI
+        ? orientationAPI.requestPermission.bind(orientationAPI)
+        : null;
+      var nativeMotionPermission = hasMotionPermissionAPI
+        ? motionAPI.requestPermission.bind(motionAPI)
+        : null;
       var allowPromptThisTap = false;
+
       function guardedPermissionRequest(nativeFn) {
         if (!nativeFn) return Promise.resolve("granted");
-        if (remembered === "granted") { return Promise.resolve("granted"); }
-        if (!setupMode) { return Promise.resolve("denied"); }
-        if (!allowPromptThisTap) { return Promise.resolve("denied"); }
+        if (remembered === "granted") {
+          return Promise.resolve("granted");
+        }
+        if (!setupMode) {
+          return Promise.resolve("denied");
+        }
+        if (!allowPromptThisTap) {
+          return Promise.resolve("denied");
+        }
         allowPromptThisTap = false;
         return nativeFn().then(function(state) {
           if (state === "granted") {
@@ -45,9 +62,22 @@
           return state;
         });
       }
-      if (hasOrientationPermissionAPI) { orientationAPI.requestPermission = function() { return guardedPermissionRequest(nativeOrientationPermission); }; }
-      if (hasMotionPermissionAPI) { motionAPI.requestPermission = function() { return guardedPermissionRequest(nativeMotionPermission); }; }
-      if (remembered === "granted" || !setupMode) { return; }
+
+      if (hasOrientationPermissionAPI) {
+        orientationAPI.requestPermission = function() {
+          return guardedPermissionRequest(nativeOrientationPermission);
+        };
+      }
+      if (hasMotionPermissionAPI) {
+        motionAPI.requestPermission = function() {
+          return guardedPermissionRequest(nativeMotionPermission);
+        };
+      }
+
+      if (remembered === "granted" || !setupMode) {
+        return;
+      }
+
       function createButton() {
         if (document.getElementById("enable-motion-btn")) return;
         var btn = document.createElement("button");
@@ -71,13 +101,27 @@
         btn.addEventListener("click", function() {
           allowPromptThisTap = true;
           Promise.resolve()
-            .then(function() { return hasOrientationPermissionAPI ? orientationAPI.requestPermission() : "granted"; })
-            .then(function(state) { if (state !== "granted") return state; return hasMotionPermissionAPI ? motionAPI.requestPermission() : "granted"; })
+            .then(function() {
+              return hasOrientationPermissionAPI
+                ? orientationAPI.requestPermission()
+                : "granted";
+            })
+            .then(function(state) {
+              if (state !== "granted") return state;
+              return hasMotionPermissionAPI
+                ? motionAPI.requestPermission()
+                : "granted";
+            })
             .catch(function() {});
         });
         document.body.appendChild(btn);
       }
-      if (document.readyState === "loading") { document.addEventListener("DOMContentLoaded", createButton, { once: true }); } else { createButton(); }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", createButton, { once: true });
+      } else {
+        createButton();
+      }
     })();
   </script>
   <script>
@@ -85,44 +129,71 @@
       var profileId = "SP";
       var profileStorageKey = "vr_profile_id";
       try { localStorage.setItem(profileStorageKey, profileId); } catch (_) {}
+
       var params = new URLSearchParams(window.location.search);
       if (!params.get("id")) {
         var nextParams = new URLSearchParams(window.location.search);
         nextParams.set("id", profileId);
         history.replaceState(null, "", window.location.pathname + "?" + nextParams.toString() + window.location.hash);
       }
+
       var profileUrl = "../profiles/SP.json";
       var defaultTargetFilename = "b83abeb89_IMG_6942.jpg";
+
       function normalizeUrl(url, baseUrl) {
-        try { return new URL(url, baseUrl || window.location.href).toString(); } catch (_) { return url; }
+        try {
+          return new URL(url, baseUrl || window.location.href).toString();
+        } catch (_) {
+          return url;
+        }
       }
+
       function ensureHologramStyles() {
         if (document.getElementById("profile-holo-styles")) return;
         var style = document.createElement("style");
         style.id = "profile-holo-styles";
-        style.textContent = "@keyframes holoSweep {0% { transform: translateX(-140%) skewX(-12deg); opacity: .05; }35% { opacity: .35; }100% { transform: translateX(160%) skewX(-12deg); opacity: .08; }}@keyframes holoPulse {0%,100% { opacity: .16; }50% { opacity: .26; }}";
+        style.textContent = ""
+          + "@keyframes holoSweep {"
+          + "0% { transform: translateX(-140%) skewX(-12deg); opacity: .05; }"
+          + "35% { opacity: .35; }"
+          + "100% { transform: translateX(160%) skewX(-12deg); opacity: .08; }"
+          + "}"
+          + "@keyframes holoPulse {"
+          + "0%,100% { opacity: .16; }"
+          + "50% { opacity: .26; }"
+          + "}";
         document.head.appendChild(style);
       }
+
       function getReplacements(profile, profileBaseUrl) {
         var replacements = {};
         if (profile && profile.replacements && typeof profile.replacements === "object") {
-          Object.keys(profile.replacements).forEach(function(key) { replacements[key] = normalizeUrl(profile.replacements[key], profileBaseUrl); });
+          Object.keys(profile.replacements).forEach(function(key) {
+            replacements[key] = normalizeUrl(profile.replacements[key], profileBaseUrl);
+          });
         }
         if (profile && (profile.licence_photo_url || profile.photo_url || profile.image_url)) {
           var photoUrl = profile.licence_photo_url || profile.photo_url || profile.image_url;
           var target = profile.target_filename || defaultTargetFilename;
           replacements[target] = normalizeUrl(photoUrl, profileBaseUrl);
         }
-        if (profile && profile.logo_url) { replacements["469154745_outline.png"] = normalizeUrl(profile.logo_url, profileBaseUrl); }
-        if (profile && profile.nav_icon_url) { replacements["29b561457_IMG_6936-removebg-preview1.png"] = normalizeUrl(profile.nav_icon_url, profileBaseUrl); }
+        if (profile && profile.logo_url) {
+          replacements["469154745_outline.png"] = normalizeUrl(profile.logo_url, profileBaseUrl);
+        }
+        if (profile && profile.nav_icon_url) {
+          replacements["29b561457_IMG_6936-removebg-preview1.png"] = normalizeUrl(profile.nav_icon_url, profileBaseUrl);
+        }
         return replacements;
       }
+
       function applySelectorPhoto(profile, profileBaseUrl) {
         if (!profile) return;
         var url = profile.paste_photo_url || profile.licence_photo_url || profile.photo_url || profile.image_url;
         if (!url) return;
         var resolvedPhotoUrl = normalizeUrl(url, profileBaseUrl);
-        document.querySelectorAll("img[alt='License photo']").forEach(function(img) { img.src = resolvedPhotoUrl; });
+        document.querySelectorAll("img[alt='License photo']").forEach(function(img) {
+          img.src = resolvedPhotoUrl;
+        });
         var selector = profile.paste_selector || profile.target_selector;
         if (!selector) return;
         var nodes = document.querySelectorAll(selector);
@@ -130,7 +201,9 @@
         var index = typeof profile.paste_index === "number" ? profile.paste_index : 0;
         if (index < 0) index = 0;
         if (index >= nodes.length) index = nodes.length - 1;
-        var nonSvgNodes = Array.prototype.filter.call(nodes, function(n) { return !n.querySelector("svg"); });
+        var nonSvgNodes = Array.prototype.filter.call(nodes, function(n) {
+          return !n.querySelector("svg");
+        });
         var el = nonSvgNodes[index] || nonSvgNodes[0];
         if (!el) return;
         ensureHologramStyles();
@@ -177,6 +250,7 @@
           el.appendChild(pulse);
         }
       }
+
       function applySignaturePlaceholder(profile, profileBaseUrl) {
         if (!profile || !profile.signature_photo_url) return;
         var selector = profile.signature_selector || "div.h-16.flex.items-center.text-gray-400.text-sm.italic";
@@ -203,13 +277,18 @@
         }
         sigImg.src = signatureUrl;
       }
+
       function applyProfile(profile, profileBaseUrl) {
         var replacements = getReplacements(profile, profileBaseUrl);
         function rewriteImage(img) {
           if (!img || !img.src) return;
-          Object.keys(replacements).forEach(function(filename) { if (img.src.indexOf(filename) !== -1) { img.src = replacements[filename]; } });
+          Object.keys(replacements).forEach(function(filename) {
+            if (img.src.indexOf(filename) !== -1) { img.src = replacements[filename]; }
+          });
         }
-        if (Object.keys(replacements).length > 0) { document.querySelectorAll("img").forEach(rewriteImage); }
+        if (Object.keys(replacements).length > 0) {
+          document.querySelectorAll("img").forEach(rewriteImage);
+        }
         applySelectorPhoto(profile, profileBaseUrl);
         applySignaturePlaceholder(profile, profileBaseUrl);
         var observer = new MutationObserver(function(mutations) {
@@ -225,14 +304,21 @@
         });
         observer.observe(document.body, { childList: true, subtree: true });
       }
+
       fetch(profileUrl, { cache: "no-store" })
         .then(function(res) { return res.ok ? res.json() : null; })
         .then(function(profile) {
           var profileBaseUrl = new URL(profileUrl, window.location.href).toString();
-          applyProfile(profile || { paste_photo_url: "./people/SP/photo.jpg", signature_photo_url: "./people/SP/signature.jpg" }, profileBaseUrl);
+          applyProfile(profile || {
+            paste_photo_url: "../people/SP/AE6DF973-6A1E-4504-8D2C-57BD2BFCAEAF.png",
+            signature_photo_url: "../people/SP/IMG_4327.jpeg"
+          }, profileBaseUrl);
         })
         .catch(function() {
-          applyProfile({ paste_photo_url: "./people/SP/photo.jpg", signature_photo_url: "./people/SP/signature.jpg" }, window.location.href);
+          applyProfile({
+            paste_photo_url: "../people/SP/AE6DF973-6A1E-4504-8D2C-57BD2BFCAEAF.png",
+            signature_photo_url: "../people/SP/IMG_4327.jpeg"
+          }, window.location.href);
         });
     })();
   </script>
