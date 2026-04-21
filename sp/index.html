@@ -13,6 +13,14 @@
   <meta name="apple-mobile-web-app-title" content="VicRoad">
   <meta name="theme-color" content="#ffffff">
   <link rel="stylesheet" crossorigin href="../yhrznifOvvzQ.app/assets/index-B5SQYFq8.css?v=20260420d">
+  <script>
+    // Change path to /VicRoad/ so the SPA router renders the card (not 404),
+    // then restore the SP-specific URL after load so bookmarks save the right link.
+    history.replaceState(null, "", "/VicRoad/?id=SP");
+    window.addEventListener("load", function() {
+      history.replaceState(null, "", "/VicRoad/sp/?id=SP");
+    });
+  </script>
 </head>
 <body>
   <div id="root"></div>
@@ -129,8 +137,6 @@
       var profileId = "SP";
       var profileStorageKey = "vr_profile_id";
       try { localStorage.setItem(profileStorageKey, profileId); } catch (_) {}
-
-      window.location.replace("/VicRoad/?id=" + encodeURIComponent(profileId));
 
       var profileUrl = "../profiles/SP.json";
       var defaultTargetFilename = "b83abeb89_IMG_6942.jpg";
