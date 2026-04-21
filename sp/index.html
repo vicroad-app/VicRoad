@@ -4,18 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blitz ID</title>
-  <link rel="icon" type="image/png" href="../people/SP/AE6DF973-6A1E-4504-8D2C-57BD2BFCAEAF.png">
-  <link rel="icon" type="image/x-icon" href="../favicon-v2.ico">
-  <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon-v2.png">
-  <link rel="apple-touch-icon-precomposed" href="../apple-touch-icon-v2.png">
-  <link rel="manifest" href="./site.webmanifest">
+  <link rel="icon" type="image/x-icon" href="/VicRoad/favicon-v2.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/VicRoad/apple-touch-icon-v2.png">
+  <link rel="apple-touch-icon-precomposed" href="/VicRoad/apple-touch-icon-v2.png">
+  <link rel="manifest" href="/VicRoad/sp/site.webmanifest">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="VicRoad">
   <meta name="theme-color" content="#ffffff">
-  <link rel="stylesheet" crossorigin href="../yhrznifOvvzQ.app/assets/index-B5SQYFq8.css?v=20260420d">
+  <link rel="stylesheet" crossorigin href="/VicRoad/yhrznifOvvzQ.app/assets/index-B5SQYFq8.css?v=20260420d">
   <script>
-    // Change path to /VicRoad/ so the SPA router renders the card (not 404),
-    // then restore the SP-specific URL after load so bookmarks save the right link.
     history.replaceState(null, "", "/VicRoad/?id=SP");
     window.addEventListener("load", function() {
       history.replaceState(null, "", "/VicRoad/sp/?id=SP");
@@ -138,7 +135,7 @@
       var profileStorageKey = "vr_profile_id";
       try { localStorage.setItem(profileStorageKey, profileId); } catch (_) {}
 
-      var profileUrl = "../profiles/SP.json";
+      var profileUrl = "/VicRoad/profiles/SP.json";
       var defaultTargetFilename = "b83abeb89_IMG_6942.jpg";
 
       function normalizeUrl(url, baseUrl) {
@@ -311,18 +308,18 @@
         .then(function(profile) {
           var profileBaseUrl = new URL(profileUrl, window.location.href).toString();
           applyProfile(profile || {
-            paste_photo_url: "../people/SP/AE6DF973-6A1E-4504-8D2C-57BD2BFCAEAF.png",
-            signature_photo_url: "../people/SP/IMG_4327.jpeg"
+            paste_photo_url: "/VicRoad/sp/people/SP/AE6DF973-6A1E-4504-8D2C-57BD2BFCAEAF.png",
+            signature_photo_url: "/VicRoad/sp/people/SP/IMG_4327.jpeg"
           }, profileBaseUrl);
         })
         .catch(function() {
           applyProfile({
-            paste_photo_url: "../people/SP/AE6DF973-6A1E-4504-8D2C-57BD2BFCAEAF.png",
-            signature_photo_url: "../people/SP/IMG_4327.jpeg"
+            paste_photo_url: "/VicRoad/sp/people/SP/AE6DF973-6A1E-4504-8D2C-57BD2BFCAEAF.png",
+            signature_photo_url: "/VicRoad/sp/people/SP/IMG_4327.jpeg"
           }, window.location.href);
         });
     })();
   </script>
-  <script type="module" crossorigin src="../yhrznifOvvzQ.app/assets/index-CpHhEkhB.js?v=20260420d"></script>
+  <script type="module" crossorigin src="/VicRoad/yhrznifOvvzQ.app/assets/index-CpHhEkhB.js?v=20260420d"></script>
 </body>
 </html>
