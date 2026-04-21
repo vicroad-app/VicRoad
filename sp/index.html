@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blitz ID</title>
-  <link rel="icon" type="image/png" href="../people/SP/AE6DF973-6A1E-4504-8D2C-57BD2BFCAEAF.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="../people/SP/AE6DF973-6A1E-4504-8D2C-57BD2BFCAEAF.png">
-  <link rel="apple-touch-icon-precomposed" href="../people/SP/AE6DF973-6A1E-4504-8D2C-57BD2BFCAEAF.png">
+  <link rel="icon" type="image/jpeg" href="./people/SP/photo.jpg">
+  <link rel="apple-touch-icon" sizes="180x180" href="./people/SP/photo.jpg">
+  <link rel="apple-touch-icon-precomposed" href="./people/SP/photo.jpg">
   <link rel="manifest" href="./site.webmanifest">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="VicRoad">
@@ -309,18 +309,337 @@
         .then(function(profile) {
           var profileBaseUrl = new URL(profileUrl, window.location.href).toString();
           applyProfile(profile || {
-            paste_photo_url: "../people/SP/AE6DF973-6A1E-4504-8D2C-57BD2BFCAEAF.png",
-            signature_photo_url: "../people/SP/IMG_4327.jpeg"
+            paste_photo_url: "./people/SP/photo.jpg",
+            signature_photo_url: "./people/SP/signature.jpg"
           }, profileBaseUrl);
         })
         .catch(function() {
           applyProfile({
-            paste_photo_url: "../people/SP/AE6DF973-6A1E-4504-8D2C-57BD2BFCAEAF.png",
-            signature_photo_url: "../people/SP/IMG_4327.jpeg"
+            paste_photo_url: "./people/SP/photo.jpg",
+            signature_photo_url: "./people/SP/signature.jpg"
+          }, window.location.href);
+        });
+    })();
+  </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blitz ID</title>
+  <link rel="icon" type="image/jpeg" href="./people/SP/photo.jpg">
+  <link rel="apple-touch-icon" sizes="180x180" href="./people/SP/photo.jpg">
+  <link rel="apple-touch-icon-precomposed" href="./people/SP/photo.jpg">
+  <link rel="manifest" href="./site.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="VicRoad">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="stylesheet" crossorigin href="../yhrznifOvvzQ.app/assets/index-B5SQYFq8.css?v=20260420d">
+</head>
+<body>
+  <div id="root"></div>
+  <script>
+    (function() {
+      var storageKey = "vr_motion_permission";
+      var remembered = localStorage.getItem(storageKey);
+      var params = new URLSearchParams(window.location.search);
+      var setupMode = params.get("motionSetup") === "1";
+
+      var orientationAPI = window.DeviceOrientationEvent;
+      var motionAPI = window.DeviceMotionEvent;
+      var hasOrientationPermissionAPI = orientationAPI && typeof orientationAPI.requestPermission === "function";
+      var hasMotionPermissionAPI = motionAPI && typeof motionAPI.requestPermission === "function";
+
+      if (!hasOrientationPermissionAPI && !hasMotionPermissionAPI) {
+        return;
+      }
+
+      var nativeOrientationPermission = hasOrientationPermissionAPI
+        ? orientationAPI.requestPermission.bind(orientationAPI)
+        : null;
+      var nativeMotionPermission = hasMotionPermissionAPI
+        ? motionAPI.requestPermission.bind(motionAPI)
+        : null;
+      var allowPromptThisTap = false;
+
+      function guardedPermissionRequest(nativeFn) {
+        if (!nativeFn) return Promise.resolve("granted");
+        if (remembered === "granted") {
+          return Promise.resolve("granted");
+        }
+        if (!setupMode) {
+          return Promise.resolve("denied");
+        }
+        if (!allowPromptThisTap) {
+          return Promise.resolve("denied");
+        }
+        allowPromptThisTap = false;
+        return nativeFn().then(function(state) {
+          if (state === "granted") {
+            remembered = "granted";
+            localStorage.setItem(storageKey, "granted");
+            var btn = document.getElementById("enable-motion-btn");
+            if (btn) btn.remove();
+          }
+          return state;
+        });
+      }
+
+      if (hasOrientationPermissionAPI) {
+        orientationAPI.requestPermission = function() {
+          return guardedPermissionRequest(nativeOrientationPermission);
+        };
+      }
+      if (hasMotionPermissionAPI) {
+        motionAPI.requestPermission = function() {
+          return guardedPermissionRequest(nativeMotionPermission);
+        };
+      }
+
+      if (remembered === "granted" || !setupMode) {
+        return;
+      }
+
+      function createButton() {
+        if (document.getElementById("enable-motion-btn")) return;
+        var btn = document.createElement("button");
+        btn.id = "enable-motion-btn";
+        btn.type = "button";
+        btn.textContent = "Enable Motion";
+        btn.style.position = "fixed";
+        btn.style.right = "12px";
+        btn.style.bottom = "12px";
+        btn.style.zIndex = "9999";
+        btn.style.padding = "10px 12px";
+        btn.style.borderRadius = "10px";
+        btn.style.border = "1px solid rgba(255,255,255,.35)";
+        btn.style.background = "rgba(16,24,32,.82)";
+        btn.style.color = "#fff";
+        btn.style.fontSize = "12px";
+        btn.style.fontWeight = "600";
+        btn.style.backdropFilter = "blur(4px)";
+        btn.style.cursor = "pointer";
+        btn.title = "One-time motion permission setup";
+        btn.addEventListener("click", function() {
+          allowPromptThisTap = true;
+          Promise.resolve()
+            .then(function() {
+              return hasOrientationPermissionAPI
+                ? orientationAPI.requestPermission()
+                : "granted";
+            })
+            .then(function(state) {
+              if (state !== "granted") return state;
+              return hasMotionPermissionAPI
+                ? motionAPI.requestPermission()
+                : "granted";
+            })
+            .catch(function() {});
+        });
+        document.body.appendChild(btn);
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", createButton, { once: true });
+      } else {
+        createButton();
+      }
+    })();
+  </script>
+  <script>
+    (function() {
+      var profileId = "SP";
+      var profileStorageKey = "vr_profile_id";
+      try { localStorage.setItem(profileStorageKey, profileId); } catch (_) {}
+
+      var params = new URLSearchParams(window.location.search);
+      if (!params.get("id")) {
+        var nextParams = new URLSearchParams(window.location.search);
+        nextParams.set("id", profileId);
+        history.replaceState(null, "", window.location.pathname + "?" + nextParams.toString() + window.location.hash);
+      }
+
+      var profileUrl = "../profiles/SP.json";
+      var defaultTargetFilename = "b83abeb89_IMG_6942.jpg";
+
+      function normalizeUrl(url, baseUrl) {
+        try {
+          return new URL(url, baseUrl || window.location.href).toString();
+        } catch (_) {
+          return url;
+        }
+      }
+
+      function ensureHologramStyles() {
+        if (document.getElementById("profile-holo-styles")) return;
+        var style = document.createElement("style");
+        style.id = "profile-holo-styles";
+        style.textContent = ""
+          + "@keyframes holoSweep {"
+          + "0% { transform: translateX(-140%) skewX(-12deg); opacity: .05; }"
+          + "35% { opacity: .35; }"
+          + "100% { transform: translateX(160%) skewX(-12deg); opacity: .08; }"
+          + "}"
+          + "@keyframes holoPulse {"
+          + "0%,100% { opacity: .16; }"
+          + "50% { opacity: .26; }"
+          + "}";
+        document.head.appendChild(style);
+      }
+
+      function getReplacements(profile, profileBaseUrl) {
+        var replacements = {};
+        if (profile && profile.replacements && typeof profile.replacements === "object") {
+          Object.keys(profile.replacements).forEach(function(key) {
+            replacements[key] = normalizeUrl(profile.replacements[key], profileBaseUrl);
+          });
+        }
+        if (profile && (profile.licence_photo_url || profile.photo_url || profile.image_url)) {
+          var photoUrl = profile.licence_photo_url || profile.photo_url || profile.image_url;
+          var target = profile.target_filename || defaultTargetFilename;
+          replacements[target] = normalizeUrl(photoUrl, profileBaseUrl);
+        }
+        if (profile && profile.logo_url) {
+          replacements["469154745_outline.png"] = normalizeUrl(profile.logo_url, profileBaseUrl);
+        }
+        if (profile && profile.nav_icon_url) {
+          replacements["29b561457_IMG_6936-removebg-preview1.png"] = normalizeUrl(profile.nav_icon_url, profileBaseUrl);
+        }
+        return replacements;
+      }
+
+      function applySelectorPhoto(profile, profileBaseUrl) {
+        if (!profile) return;
+        var url = profile.paste_photo_url || profile.licence_photo_url || profile.photo_url || profile.image_url;
+        if (!url) return;
+        var resolvedPhotoUrl = normalizeUrl(url, profileBaseUrl);
+        document.querySelectorAll("img[alt='License photo']").forEach(function(img) {
+          img.src = resolvedPhotoUrl;
+        });
+        var selector = profile.paste_selector || profile.target_selector;
+        if (!selector) return;
+        var nodes = document.querySelectorAll(selector);
+        if (!nodes || nodes.length === 0) return;
+        var index = typeof profile.paste_index === "number" ? profile.paste_index : 0;
+        if (index < 0) index = 0;
+        if (index >= nodes.length) index = nodes.length - 1;
+        var nonSvgNodes = Array.prototype.filter.call(nodes, function(n) {
+          return !n.querySelector("svg");
+        });
+        var el = nonSvgNodes[index] || nonSvgNodes[0];
+        if (!el) return;
+        ensureHologramStyles();
+        if (el.tagName === "IMG") { el.src = resolvedPhotoUrl; return; }
+        el.style.position = el.style.position || "relative";
+        el.style.overflow = "hidden";
+        var baseImg = el.querySelector("img[data-profile-photo-layer='1']");
+        if (!baseImg) {
+          baseImg = document.createElement("img");
+          baseImg.setAttribute("data-profile-photo-layer", "1");
+          baseImg.alt = "profile";
+          baseImg.style.cssText = "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;pointer-events:none;border-radius:inherit;filter:saturate(1.05) contrast(1.06);";
+          el.insertBefore(baseImg, el.firstChild);
+        }
+        baseImg.src = resolvedPhotoUrl;
+        Array.prototype.forEach.call(el.children, function(child) {
+          if (child.getAttribute && child.getAttribute("data-profile-photo-layer") === "1") return;
+          if (child.getAttribute && child.getAttribute("data-profile-hologram-layer") === "1") return;
+          if (!child.style.position) child.style.position = "relative";
+          child.style.zIndex = child.style.zIndex || "1";
+        });
+        var holoUrl = profile.hologram_url || "../OZzkXmsjrDRW.co/storage/v1/object/public/base44-prod/public/68f76fb0e5537db2ab995755/ce36f2db6_Hologram2.png";
+        var holoImg = el.querySelector("img[data-profile-hologram-layer='1']");
+        if (!holoImg) {
+          holoImg = document.createElement("img");
+          holoImg.setAttribute("data-profile-hologram-layer", "1");
+          holoImg.alt = "hologram";
+          holoImg.style.cssText = "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2;pointer-events:none;opacity:0.92;mix-blend-mode:hard-light;border-radius:inherit;";
+          el.appendChild(holoImg);
+        }
+        holoImg.src = normalizeUrl(holoUrl, profileBaseUrl);
+        var sweep = el.querySelector("span[data-profile-hologram-sweep='1']");
+        if (!sweep) {
+          sweep = document.createElement("span");
+          sweep.setAttribute("data-profile-hologram-sweep", "1");
+          sweep.style.cssText = "position:absolute;top:-8%;left:-60%;width:55%;height:116%;background:linear-gradient(100deg,rgba(255,255,255,0) 0%,rgba(175,240,255,.35) 45%,rgba(255,255,255,.06) 100%);mix-blend-mode:screen;filter:blur(.3px);z-index:3;pointer-events:none;animation:holoSweep 3.2s linear infinite;";
+          el.appendChild(sweep);
+        }
+        var pulse = el.querySelector("span[data-profile-hologram-pulse='1']");
+        if (!pulse) {
+          pulse = document.createElement("span");
+          pulse.setAttribute("data-profile-hologram-pulse", "1");
+          pulse.style.cssText = "position:absolute;inset:0;background:radial-gradient(circle at 23% 18%,rgba(130,240,255,.34) 0%,rgba(130,240,255,0) 35%),radial-gradient(circle at 76% 78%,rgba(132,163,255,.24) 0%,rgba(132,163,255,0) 42%);mix-blend-mode:screen;z-index:2;pointer-events:none;animation:holoPulse 2.1s ease-in-out infinite;";
+          el.appendChild(pulse);
+        }
+      }
+
+      function applySignaturePlaceholder(profile, profileBaseUrl) {
+        if (!profile || !profile.signature_photo_url) return;
+        var selector = profile.signature_selector || "div.h-16.flex.items-center.text-gray-400.text-sm.italic";
+        var signatureUrl = normalizeUrl(profile.signature_photo_url, profileBaseUrl);
+        var nodes = document.querySelectorAll(selector);
+        if (!nodes || nodes.length === 0) return;
+        var target = null;
+        Array.prototype.some.call(nodes, function(el) {
+          var text = (el && el.textContent ? el.textContent : "").toLowerCase();
+          if (text.indexOf("signature") !== -1) { target = el; return true; }
+          return false;
+        });
+        if (!target) return;
+        if (target.tagName === "IMG") { target.src = signatureUrl; return; }
+        var sigImg = target.querySelector("img[data-profile-signature-layer='1']");
+        if (!sigImg) {
+          sigImg = document.createElement("img");
+          sigImg.setAttribute("data-profile-signature-layer", "1");
+          sigImg.alt = "Signature";
+          sigImg.style.cssText = "max-width:100%;max-height:100%;width:auto;height:100%;object-fit:contain;display:block;";
+          target.innerHTML = "";
+          target.style.overflow = "hidden";
+          target.appendChild(sigImg);
+        }
+        sigImg.src = signatureUrl;
+      }
+
+      function applyProfile(profile, profileBaseUrl) {
+        var replacements = getReplacements(profile, profileBaseUrl);
+        function rewriteImage(img) {
+          if (!img || !img.src) return;
+          Object.keys(replacements).forEach(function(filename) {
+            if (img.src.indexOf(filename) !== -1) { img.src = replacements[filename]; }
+          });
+        }
+        if (Object.keys(replacements).length > 0) {
+          document.querySelectorAll("img").forEach(rewriteImage);
+        }
+        applySelectorPhoto(profile, profileBaseUrl);
+        applySignaturePlaceholder(profile, profileBaseUrl);
+        var observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(m) {
+            m.addedNodes.forEach(function(node) {
+              if (!node || node.nodeType !== 1) return;
+              if (node.tagName === "IMG") rewriteImage(node);
+              if (node.querySelectorAll) node.querySelectorAll("img").forEach(rewriteImage);
+              applySelectorPhoto(profile, profileBaseUrl);
+              applySignaturePlaceholder(profile, profileBaseUrl);
+            });
+          });
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+      }
+
+      fetch(profileUrl, { cache: "no-store" })
+        .then(function(res) { return res.ok ? res.json() : null; })
+        .then(function(profile) {
+          var profileBaseUrl = new URL(profileUrl, window.location.href).toString();
+          applyProfile(profile || {
+            paste_photo_url: "./people/SP/photo.jpg",
+            signature_photo_url: "./people/SP/signature.jpg"
+          }, profileBaseUrl);
+        })
+        .catch(function() {
+          applyProfile({
+            paste_photo_url: "./people/SP/photo.jpg",
+            signature_photo_url: "./people/SP/signature.jpg"
           }, window.location.href);
         });
     })();
   </script>
-  <script type="module" crossorigin src="../yhrznifOvvzQ.app/assets/index-CpHhEkhB.js?v=20260420d"></script>
-</body>
-</html>
