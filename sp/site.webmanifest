@@ -1,8 +1,8 @@
 {
   "name": "VicRoad",
   "short_name": "VicRoad",
-  "start_url": "/VicRoad/SP/?id=SP",
-  "scope": "/VicRoad/SP/",
+  "start_url": "/VicRoad/sp/?id=SP",
+  "scope": "/VicRoad/sp/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
