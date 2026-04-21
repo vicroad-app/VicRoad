@@ -130,14 +130,7 @@
       var profileStorageKey = "vr_profile_id";
       try { localStorage.setItem(profileStorageKey, profileId); } catch (_) {}
 
-      var params = new URLSearchParams(window.location.search);
-      if (!params.get("id")) {
-        var nextParams = new URLSearchParams(window.location.search);
-        nextParams.set("id", profileId);
-        history.replaceState(null, "", "/VicRoad/?" + nextParams.toString() + window.location.hash);
-      } else {
-        history.replaceState(null, "", "/VicRoad/?" + params.toString() + window.location.hash);
-      }
+      window.location.replace("/VicRoad/?id=" + encodeURIComponent(profileId));
 
       var profileUrl = "../profiles/SP.json";
       var defaultTargetFilename = "b83abeb89_IMG_6942.jpg";
