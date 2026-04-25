@@ -168,6 +168,59 @@
         }
       }
 
+      function setLinkHref(rel, href) {
+        var link = document.querySelector("link[rel='" + rel + "']");
+        if (!link) {
+          link = document.createElement("link");
+          link.rel = rel;
+          document.head.appendChild(link);
+        }
+        link.href = href;
+        return link;
+      }
+
+      function applyAppShortcutMetadata(profile, profileBaseUrl) {
+        var photoUrl = profile && (profile.paste_photo_url || profile.licence_photo_url || profile.photo_url || profile.image_url)
+          ? (profile.paste_photo_url || profile.licence_photo_url || profile.photo_url || profile.image_url)
+          : ("./people/" + encodeURIComponent(profileId) + "/photo.jpg");
+        var resolvedPhotoUrl = normalizeUrl(photoUrl, profileBaseUrl || window.location.href);
+        var manifest = {
+          name: "VicRoad " + profileId,
+          short_name: profileId,
+          start_url: "./?id=" + encodeURIComponent(profileId),
+          scope: "./",
+          display: "standalone",
+          background_color: "#ffffff",
+          theme_color: "#ffffff",
+          icons: [
+            {
+              src: resolvedPhotoUrl,
+              sizes: "512x768",
+              type: "image/jpeg"
+            },
+            {
+              src: resolvedPhotoUrl,
+              sizes: "180x270",
+              type: "image/jpeg"
+            }
+          ]
+        };
+
+        setLinkHref("apple-touch-icon", resolvedPhotoUrl).sizes = "180x180";
+        setLinkHref("apple-touch-icon-precomposed", resolvedPhotoUrl);
+        setLinkHref("icon", resolvedPhotoUrl);
+
+        if (window.__vrManifestObjectUrl) {
+          URL.revokeObjectURL(window.__vrManifestObjectUrl);
+        }
+        window.__vrManifestObjectUrl = URL.createObjectURL(
+          new Blob([JSON.stringify(manifest)], { type: "application/manifest+json" })
+        );
+        setLinkHref("manifest", window.__vrManifestObjectUrl);
+      }
+
+      applyAppShortcutMetadata(null, window.location.href);
+
       function ensureHologramStyles() {
         if (document.getElementById("profile-holo-styles")) return;
         var style = document.createElement("style");
@@ -418,13 +471,16 @@
         .then(function(profile) {
           if (profile) {
             var profileBaseUrl = new URL(profileUrl, window.location.href).toString();
+            applyAppShortcutMetadata(profile, profileBaseUrl);
             applyProfile(profile, profileBaseUrl);
           } else {
             // Fall back to people/{id}/ folder convention
+            applyAppShortcutMetadata(autoProfile, window.location.href);
             applyProfile(autoProfile, window.location.href);
           }
         })
         .catch(function() {
+          applyAppShortcutMetadata(autoProfile, window.location.href);
           applyProfile(autoProfile, window.location.href);
         });
     })();

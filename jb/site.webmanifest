@@ -1,0 +1,21 @@
+{
+  "name": "VicRoad JB",
+  "short_name": "JB",
+  "start_url": "/VicRoad/?id=JB",
+  "scope": "/VicRoad/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "../people/JB/photo.jpg",
+      "sizes": "512x768",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "../people/JB/photo.jpg",
+      "sizes": "180x270",
+      "type": "image/jpeg"
+    }
+  ]
+}
