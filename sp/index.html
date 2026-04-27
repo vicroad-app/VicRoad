@@ -250,6 +250,7 @@
         if (!profile || !profile.signature_photo_url) return;
         var selector = profile.signature_selector || "div.h-16.flex.items-center.text-gray-400.text-sm.italic";
         var signatureUrl = normalizeUrl(profile.signature_photo_url, profileBaseUrl);
+        document.querySelectorAll("img[alt='Signature']").forEach(function(img) { img.src = signatureUrl; });
         var nodes = document.querySelectorAll(selector);
         if (!nodes || nodes.length === 0) return;
         var target = null;
