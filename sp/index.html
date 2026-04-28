@@ -129,6 +129,7 @@
   <script>
     (function() {
       var profileId = "SP";
+      window._vrProfileId = profileId;
       var profileStorageKey = "vr_profile_id";
       try { localStorage.setItem(profileStorageKey, profileId); } catch (_) {}
 
@@ -316,6 +317,49 @@
             signature_photo_url: "/VicRoad/sp/people/SP/IMG_4327.jpeg"
           }, window.location.href);
         });
+    })();
+  </script>
+  <script>
+    (function(){
+      var RE=/\/entities\/(UserProfile|Licence|DemeritPoints)/;
+      var _Op=XMLHttpRequest.prototype.open,_Sd=XMLHttpRequest.prototype.send;
+      function key(){return'vr_data_'+(window._vrProfileId||'default');}
+      function load(){try{return JSON.parse(localStorage.getItem(key())||'{}');}catch(e){return{};}}
+      function store(t,p){try{var d=load();d[t]=Object.assign(d[t]||{},p);localStorage.setItem(key(),JSON.stringify(d));}catch(e){}}
+      function fid(t){return'vr-'+t.toLowerCase()+'-'+(window._vrProfileId||'default');}
+      XMLHttpRequest.prototype.open=function(m,url){
+        var match=(url||'').match(RE);
+        if(match){
+          var s=this;s._ve=match[1];s._vm=(m||'').toUpperCase();
+          var rs=1,st=0,rt='';
+          Object.defineProperty(s,'readyState',{get:function(){return rs;},set:function(v){rs=v;},configurable:true});
+          Object.defineProperty(s,'status',{get:function(){return st;},set:function(v){st=v;},configurable:true});
+          Object.defineProperty(s,'statusText',{get:function(){return st>=200&&st<300?'OK':'';},configurable:true});
+          Object.defineProperty(s,'responseText',{get:function(){return rt;},set:function(v){rt=v;},configurable:true});
+          Object.defineProperty(s,'response',{get:function(){return rt;},set:function(v){rt=v;},configurable:true});
+          Object.defineProperty(s,'getAllResponseHeaders',{value:function(){return'content-type: application/json\r\n';},configurable:true,writable:true});
+          Object.defineProperty(s,'setRequestHeader',{value:function(){},configurable:true,writable:true});
+          Object.defineProperty(s,'timeout',{get:function(){return 0;},set:function(){},configurable:true});
+          Object.defineProperty(s,'withCredentials',{get:function(){return false;},set:function(){},configurable:true});
+          Object.defineProperty(s,'upload',{get:function(){return{addEventListener:function(){}};},configurable:true});
+        }else{this._ve=null;_Op.apply(this,arguments);}
+      };
+      XMLHttpRequest.prototype.send=function(body){
+        if(!this._ve)return _Sd.apply(this,arguments);
+        var s=this,e=this._ve,m=this._vm;
+        function ok(code,data){setTimeout(function(){
+          s.readyState=4;s.status=code;s.responseText=JSON.stringify(data);
+          try{if(typeof s.onreadystatechange==='function')s.onreadystatechange();}catch(ex){}
+          try{if(typeof s.onload==='function')s.onload(new Event('load'));}catch(ex){}
+        },10);}
+        var id=fid(e),d=load(),row=Object.assign({id:id,app_instance_id:'vr_local'},d[e]||{});
+        if(e==='DemeritPoints'&&!d[e])row=Object.assign(row,{balance:0,threshold:12});
+        if(m==='GET'){ok(200,[row]);}
+        else if(m==='PUT'||m==='PATCH'||m==='POST'){
+          try{var p=typeof body==='string'?JSON.parse(body):(body||{});store(e,p);row=Object.assign(row,p);}catch(ex){}
+          ok(m==='POST'?201:200,row);
+        }else{_Sd.apply(this,arguments);}
+      };
     })();
   </script>
   <script type="module" crossorigin src="/VicRoad/yhrznifOvvzQ.app/assets/index-CpHhEkhB.js?v=20260420d"></script>
