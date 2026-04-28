@@ -6,6 +6,27 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <style>input,textarea,select{font-size:16px !important;}</style>
+  <script>
+    (function(){
+      function disableAutofill(el){
+        if(el.tagName==='INPUT'||el.tagName==='TEXTAREA'||el.tagName==='SELECT'){
+          el.setAttribute('autocomplete','off');
+          el.setAttribute('autocorrect','off');
+          el.setAttribute('autocapitalize','off');
+          el.setAttribute('spellcheck','false');
+        }
+      }
+      function scanAll(){document.querySelectorAll('input,textarea,select').forEach(disableAutofill);}
+      new MutationObserver(function(ms){
+        ms.forEach(function(m){m.addedNodes.forEach(function(n){
+          if(n.nodeType!==1)return;
+          disableAutofill(n);
+          if(n.querySelectorAll)n.querySelectorAll('input,textarea,select').forEach(disableAutofill);
+        });});
+      }).observe(document.documentElement,{childList:true,subtree:true});
+      document.addEventListener('DOMContentLoaded',scanAll);
+    })();
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blitz ID</title>
   <link rel="icon" type="image/webp" href="./OZzkXmsjrDRW.co/storage/v1/object/public/base44-prod/public/68f76fb0e5537db2ab995755/4LFbXm6fAQKv.webp">
