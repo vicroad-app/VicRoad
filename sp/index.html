@@ -351,6 +351,7 @@
           s.readyState=4;s.status=code;s.responseText=JSON.stringify(data);
           try{if(typeof s.onreadystatechange==='function')s.onreadystatechange();}catch(ex){}
           try{if(typeof s.onload==='function')s.onload(new Event('load'));}catch(ex){}
+          try{if(typeof s.onloadend==='function')s.onloadend(new Event('loadend'));}catch(ex){}
         },10);}
         var id=fid(e),d=load(),row=Object.assign({id:id,app_instance_id:'vr_local'},d[e]||{});
         if(e==='DemeritPoints'&&!d[e])row=Object.assign(row,{balance:0,threshold:12});
